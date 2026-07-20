@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ceragem - Terapias</title>
+    <style>
+        /* Reset y estilos generales */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #C62828;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        .header h1 {
+            color: #FFFFFF;
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .header p {
+            color: #FFCDD2;
+            font-size: 1.2rem;
+        }
+
+        .container {
+            max-width: 1300px;
+            width: 100%;
+            background: #FFFFFF;
+            border-radius: 20px;
+            padding: 25px 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Formulario de registro */
+        .form-section {
+            border-bottom: 2px solid #C62828;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 12px;
+            align-items: end;
+        }
+        .field {
+            display: flex;
+            flex-direction: column;
+        }
+        .field label {
+            font-weight: 600;
+            color: #C62828;
+            font-size: 0.8rem;
+            margin-bottom: 3px;
+        }
+        .field input {
+            padding: 8px 10px;
+            border: 2px solid #C62828;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+        .field input:focus {
+            outline: none;
+            border-color: #B71C1C;
+            box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.2);
+        }
+        .btn {
+            background-color: #C62828;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn:hover {
+            background-color: #B71C1C;
+        }
+        .btn:active {
+            transform: scale(0.96);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #C62828;
+            color: #C62828;
+        }
+        .btn-outline:hover {
+            background: #C62828;
+            color: white;
+        }
+        .btn-success {
+            background-color: #2E7D32;
+        }
+        .btn-success:hover {
+            background-color: #1B5E20;
+        }
+        .btn-danger {
+            background-color: #D32F2F;
+        }
+        .btn-danger:hover {
+            background-color: #B71C1C;
+        }
+        .btn-warning {
+            background-color: #F57C00;
+        }
+        .btn-warning:hover {
+            background-color: #E65100;
+        }
+
+        /* Buscador y lista */
+        .list-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .search-bar input {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px 14px;
+            border: 2px solid #C62828;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        .search-bar input:focus {
+            outline: none;
+            border-color: #B71C1C;
+            box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.2);
+        }
+
+        /* Lista de clientes (horizontal scroll) */
+        .client-list-wrapper {
+            overflow-x: auto;
+            padding: 8px 0;
+            display: flex;
+            gap: 12px;
+            flex-wrap: nowrap;
+        }
+        .client-list-wrapper::-webkit-scrollbar {
+            height: 6px;
+        }
+        .client-list-wrapper::-webkit-scrollbar-thumb {
+            background: #C62828;
+            border-radius: 10px;
+        }
+        .client-item {
+            background: #FFF5F5;
+            border: 2px solid #C62828;
+            border-radius: 12px;
+            padding: 10px 18px;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+            flex: 0 0 auto;
+            font-weight: 500;
+            color: #333;
+        }
+        .client-item:hover {
+            background: #FFEBEE;
+            transform: scale(1.02);
+        }
+        .client-item.active {
+            background: #C62828;
+            color: white;
+            border-color: #C62828;
+        }
+        .client-item .doc {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            display: block;
+            font-weight: 400;
+        }
+
+        /* Panel detallado */
+        .panel-section {
+            margin-top: 20px;
+            border-top: 2px solid #C62828;
+            padding-top: 20px;
+            min-height: 250px;
+        }
+        .panel-placeholder {
+            text-align: center;
+            color: #999;
+            font-size: 1.2rem;
+            padding: 30px 0;
+        }
+
+        .panel-card {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px 40px;
+            background: #FFF5F5;
+            border-radius: 16px;
+            padding: 25px 30px;
+            border-left: 8px solid #C62828;
+        }
+        .panel-left {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .panel-left .name {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #C62828;
+            margin-bottom: 5px;
+        }
+        .panel-left .detail {
+            font-size: 1rem;
+            color: #444;
+        }
+        .panel-left .detail strong {
+            color: #C62828;
+        }
+        .panel-left .monto {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2E7D32;
+        }
+        .panel-right {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .panel-right .stats {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+            background: white;
+            padding: 12px 18px;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        }
+        .panel-right .stats div {
+            text-align: center;
+        }
+        .panel-right .stats .number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #C62828;
+        }
+        .panel-right .stats .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #777;
+            letter-spacing: 0.5px;
+        }
+        .panel-right .actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 5px;
+        }
+        .panel-right .historial {
+            margin-top: 10px;
+            background: white;
+            border-radius: 12px;
+            padding: 12px 18px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        .panel-right .historial h4 {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 6px;
+        }
+        .panel-right .historial ul {
+            list-style: none;
+            padding: 0;
+        }
+        .panel-right .historial ul li {
+            font-size: 0.9rem;
+            color: #333;
+            padding: 3px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .panel-right .historial .empty {
+            color: #999;
+            font-style: italic;
+        }
+
+        /* Ocultar input file */
+        #fileInput {
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 850px) {
+            .panel-card {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            .container {
+                padding: 15px;
+            }
+            .form-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .panel-left .name {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Ceragem</h1>
+        <p>Terapias · Control de asistencias</p>
+    </div>
+
+    <div class="container">
+        <!-- Formulario de registro -->
+        <div class="form-section">
+            <form id="formCliente" class="form-grid">
+                <div class="field">
+                    <label for="nombre">Nombre *</label>
+                    <input type="text" id="nombre" placeholder="Ej: Juan" required />
+                </div>
+                <div class="field">
+                    <label for="documento">Documento (Cédula) *</label>
+                    <input type="text" id="documento" placeholder="Ej: 001-17142794-5" required />
+                </div>
+                <div class="field">
+                    <label for="telefono">Teléfono</label>
+                    <input type="text" id="telefono" placeholder="Ej: 829-205-5110" />
+                </div>
+                <div class="field">
+                    <label for="correo">Correo</label>
+                    <input type="email" id="correo" placeholder="ej@mail.com" />
+                </div>
+                <div class="field">
+                    <label for="monto">Monto pagado ($)</label>
+                    <input type="number" id="monto" placeholder="0" min="0" step="1" />
+                </div>
+                <div class="field">
+                    <label for="dias">Días contratados</label>
+                    <input type="number" id="dias" placeholder="Ej: 10" min="1" step="1" required />
+                </div>
+                <div class="field" style="justify-content: flex-end;">
+                    <button type="submit" class="btn">➕ Agregar cliente</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Lista de clientes + buscador -->
+        <div class="list-section">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="🔍 Buscar por nombre, documento, teléfono o correo..." />
+                <button class="btn btn-outline" id="clearSearch">✖ Limpiar</button>
+                <button class="btn" id="importBtn">📂 Importar CSV</button>
+                <input type="file" id="fileInput" accept=".csv" />
+            </div>
+            <div class="client-list-wrapper" id="clientList">
+                <!-- Los clientes se renderizan aquí como elementos clickeables -->
+            </div>
+        </div>
+
+        <!-- Panel detallado -->
+        <div class="panel-section" id="panelSection">
+            <div class="panel-placeholder">Selecciona un cliente para ver sus detalles</div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const STORAGE_KEY = 'ceragem_clientes_v2';
+
+            // -------- Modelo de datos --------
+            function getClientes() {
+                const data = localStorage.getItem(STORAGE_KEY);
+                return data ? JSON.parse(data) : [];
+            }
+
+            function saveClientes(clientes) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(clientes));
+            }
+
+            // -------- Utilidades --------
+            function escapeHTML(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            function formatDate(ts) {
+                const d = new Date(ts);
+                return d.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+            }
+
+            // -------- Validación de duplicado (nombre + documento) --------
+            function existeCliente(nombre, documento, clientes, excludeIndex = -1) {
+                return clientes.some((c, i) =>
+                    i !== excludeIndex &&
+                    c.nombre.toLowerCase() === nombre.toLowerCase() &&
+                    c.documento.toLowerCase() === documento.toLowerCase()
+                );
+            }
+
+            // -------- Renderizar lista de clientes (horizontal) --------
+            function renderLista(filtro = '', selectedId = null) {
+                const clientes = getClientes();
+                const wrapper = document.getElementById('clientList');
+                const filtroLower = filtro.toLowerCase().trim();
+
+                let filtrados = clientes;
+                if (filtroLower) {
+                    filtrados = clientes.filter(c =>
+                        c.nombre.toLowerCase().includes(filtroLower) ||
+                        c.documento.toLowerCase().includes(filtroLower) ||
+                        (c.telefono && c.telefono.toLowerCase().includes(filtroLower)) ||
+                        (c.correo && c.correo.toLowerCase().includes(filtroLower))
+                    );
+                }
+
+                if (filtrados.length === 0) {
+                    wrapper.innerHTML = `<span style="color:#999; padding:10px;">${clientes.length === 0 ? 'No hay clientes registrados.' : 'No se encontraron resultados.'}</span>`;
+                    return;
+                }
+
+                let html = '';
+                filtrados.forEach(c => {
+                    const active = (selectedId !== null && c.id === selectedId) ? 'active' : '';
+                    html += `
+                        <div class="client-item ${active}" data-id="${c.id}">
+                            ${escapeHTML(c.nombre)}
+                            <span class="doc">📄 ${escapeHTML(c.documento)}</span>
+                        </div>
+                    `;
+                });
+                wrapper.innerHTML = html;
+
+                wrapper.querySelectorAll('.client-item').forEach(el => {
+                    el.addEventListener('click', function() {
+                        const id = this.dataset.id;
+                        const cliente = getClientes().find(c => c.id == id);
+                        if (cliente) {
+                            renderPanel(cliente);
+                            renderLista(document.getElementById('searchInput').value, id);
+                        }
+                    });
+                });
+            }
+
+            // -------- Renderizar panel detallado --------
+            function renderPanel(cliente) {
+                const section = document.getElementById('panelSection');
+                if (!cliente) {
+                    section.innerHTML = `<div class="panel-placeholder">Selecciona un cliente para ver sus detalles</div>`;
+                    return;
+                }
+
+                const diasAsistidos = cliente.diasTotales - cliente.diasRestantes;
+                const historial = cliente.historial || [];
+
+                let historialHtml = '';
+                if (historial.length === 0) {
+                    historialHtml = '<li class="empty">Sin asistencias registradas.</li>';
+                } else {
+                    const ultimas = historial.slice().reverse().slice(0, 10);
+                    historialHtml = ultimas.map(ts => `<li>📅 ${formatDate(ts)}</li>`).join('');
+                }
+
+                section.innerHTML = `
+                    <div class="panel-card">
+                        <div class="panel-left">
+                            <div class="name">${escapeHTML(cliente.nombre)}</div>
+                            <div class="detail"><strong>📄 Documento:</strong> ${escapeHTML(cliente.documento)}</div>
+                            ${cliente.telefono ? `<div class="detail"><strong>📞 Teléfono:</strong> ${escapeHTML(cliente.telefono)}</div>` : ''}
+                            ${cliente.correo ? `<div class="detail"><strong>✉️ Correo:</strong> ${escapeHTML(cliente.correo)}</div>` : ''}
+                            <div class="monto">💰 Monto pagado: $${cliente.monto}</div>
+                        </div>
+                        <div class="panel-right">
+                            <div class="stats">
+                                <div>
+                                    <div class="number">${cliente.diasRestantes}</div>
+                                    <div class="label">DÍAS RESTANTES</div>
+                                </div>
+                                <div>
+                                    <div class="number">${diasAsistidos}</div>
+                                    <div class="label">DÍAS ASISTIDOS</div>
+                                </div>
+                                <div>
+                                    <div class="number">${cliente.diasTotales}</div>
+                                    <div class="label">TOTAL PAQUETE</div>
+                                </div>
+                            </div>
+                            <div class="actions">
+                                <button class="btn btn-success" id="btnAsistencia">✔ Registrar Asistencia Hoy</button>
+                                <button class="btn btn-danger" id="btnEliminar">🗑️ Borrar</button>
+                            </div>
+                            <div class="historial">
+                                <h4>📋 Historial de Visitas</h4>
+                                <ul>${historialHtml}</ul>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('btnAsistencia').addEventListener('click', function() {
+                    registrarAsistencia(cliente.id);
+                });
+                document.getElementById('btnEliminar').addEventListener('click', function() {
+                    eliminarCliente(cliente.id);
+                });
+            }
+
+            // -------- Acciones --------
+            function registrarAsistencia(id) {
+                const clientes = getClientes();
+                const idx = clientes.findIndex(c => c.id == id);
+                if (idx === -1) return;
+                const cliente = clientes[idx];
+
+                if (cliente.diasRestantes <= 0) {
+                    alert(`El cliente ${cliente.nombre} ya no tiene días disponibles.`);
+                    return;
+                }
+
+                cliente.diasRestantes -= 1;
+                if (!cliente.historial) cliente.historial = [];
+                cliente.historial.push(Date.now());
+
+                saveClientes(clientes);
+                renderPanel(cliente);
+                renderLista(document.getElementById('searchInput').value, cliente.id);
+            }
+
+            function eliminarCliente(id) {
+                if (!confirm('¿Estás seguro de eliminar a este cliente?')) return;
+                let clientes = getClientes();
+                const idx = clientes.findIndex(c => c.id == id);
+                if (idx === -1) return;
+                clientes.splice(idx, 1);
+                saveClientes(clientes);
+                document.getElementById('panelSection').innerHTML = `<div class="panel-placeholder">Selecciona un cliente para ver sus detalles</div>`;
+                renderLista(document.getElementById('searchInput').value, null);
+            }
+
+            // -------- Agregar cliente (desde formulario) --------
+            function agregarCliente(e) {
+                e.preventDefault();
+
+                const nombre = document.getElementById('nombre').value.trim();
+                const documento = document.getElementById('documento').value.trim();
+                const telefono = document.getElementById('telefono').value.trim();
+                const correo = document.getElementById('correo').value.trim();
+                const monto = parseFloat(document.getElementById('monto').value) || 0;
+                const diasTotales = parseInt(document.getElementById('dias').value);
+
+                if (!nombre || !documento) {
+                    alert('Nombre y Documento son obligatorios.');
+                    return;
+                }
+                if (isNaN(diasTotales) || diasTotales < 1) {
+                    alert('Ingresa una cantidad de días válida (mínimo 1).');
+                    return;
+                }
+
+                const clientes = getClientes();
+                if (existeCliente(nombre, documento, clientes)) {
+                    alert(`Ya existe un cliente con el nombre "${nombre}" y documento "${documento}".`);
+                    return;
+                }
+
+                const nuevo = {
+                    id: Date.now() + Math.random(),
+                    nombre,
+                    documento,
+                    telefono,
+                    correo,
+                    monto,
+                    diasTotales,
+                    diasRestantes: diasTotales,
+                    historial: []
+                };
+
+                clientes.push(nuevo);
+                saveClientes(clientes);
+
+                document.getElementById('nombre').value = '';
+                document.getElementById('documento').value = '';
+                document.getElementById('telefono').value = '';
+                document.getElementById('correo').value = '';
+                document.getElementById('monto').value = '';
+                document.getElementById('dias').value = '';
+
+                renderLista(document.getElementById('searchInput').value, nuevo.id);
+                renderPanel(nuevo);
+            }
+
+            // -------- Importar CSV --------
+            function importarCSV(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const text = e.target.result;
+                    const lineas = text.split(/\r?\n/).filter(linea => linea.trim() !== '');
+                    if (lineas.length < 2) {
+                        alert('El archivo CSV debe tener al menos una fila de encabezados y una de datos.');
+                        return;
+                    }
+
+                    // Extraer encabezados (primera fila)
+                    const encabezados = lineas[0].split(',').map(h => h.trim().toLowerCase());
+                    // Mapeo de columnas esperadas
+                    const idxNombre = encabezados.indexOf('nombre');
+                    const idxDocumento = encabezados.indexOf('documento');
+                    const idxTelefono = encabezados.indexOf('telefono');
+                    const idxCorreo = encabezados.indexOf('correo');
+                    const idxMonto = encabezados.indexOf('monto');
+                    const idxDias = encabezados.indexOf('diastotales');
+
+                    if (idxNombre === -1 || idxDocumento === -1 || idxDias === -1) {
+                        alert('El CSV debe contener al menos las columnas: nombre, documento, diasTotales.');
+                        return;
+                    }
+
+                    const clientesActuales = getClientes();
+                    let agregados = 0;
+                    let omitidos = 0;
+
+                    for (let i = 1; i < lineas.length; i++) {
+                        const columnas = lineas[i].split(',').map(c => c.trim());
+                        // Si la fila tiene menos columnas que los encabezados, rellenar con vacío
+                        while (columnas.length < encabezados.length) columnas.push('');
+
+                        const nombre = columnas[idxNombre] || '';
+                        const documento = columnas[idxDocumento] || '';
+                        const telefono = (idxTelefono !== -1) ? columnas[idxTelefono] || '' : '';
+                        const correo = (idxCorreo !== -1) ? columnas[idxCorreo] || '' : '';
+                        const monto = (idxMonto !== -1) ? parseFloat(columnas[idxMonto]) || 0 : 0;
+                        const diasTotales = parseInt(columnas[idxDias]) || 0;
+
+                        if (!nombre || !documento || diasTotales < 1) {
+                            omitidos++;
+                            continue; // fila inválida
+                        }
+
+                        // Verificar duplicado
+                        if (existeCliente(nombre, documento, clientesActuales)) {
+                            omitidos++;
+                            continue;
+                        }
+
+                        const nuevo = {
+                            id: Date.now() + Math.random() + i,
+                            nombre,
+                            documento,
+                            telefono,
+                            correo,
+                            monto,
+                            diasTotales,
+                            diasRestantes: diasTotales,
+                            historial: []
+                        };
+                        clientesActuales.push(nuevo);
+                        agregados++;
+                    }
+
+                    saveClientes(clientesActuales);
+                    alert(`✅ Importación completada.\nSe agregaron ${agregados} clientes.\nSe omitieron ${omitidos} (datos inválidos o duplicados).`);
+                    // Refrescar vista
+                    renderLista(document.getElementById('searchInput').value, null);
+                    document.getElementById('panelSection').innerHTML = `<div class="panel-placeholder">Selecciona un cliente para ver sus detalles</div>`;
+                };
+                reader.readAsText(file, 'UTF-8');
+            }
+
+            // -------- Eventos e inicialización --------
+            document.getElementById('formCliente').addEventListener('submit', agregarCliente);
+
+            document.getElementById('searchInput').addEventListener('input', function() {
+                const filtro = this.value;
+                let selectedId = null;
+                const activeItem = document.querySelector('.client-item.active');
+                if (activeItem) selectedId = activeItem.dataset.id;
+                renderLista(filtro, selectedId);
+            });
+
+            document.getElementById('clearSearch').addEventListener('click', function() {
+                document.getElementById('searchInput').value = '';
+                const activeItem = document.querySelector('.client-item.active');
+                const selectedId = activeItem ? activeItem.dataset.id : null;
+                renderLista('', selectedId);
+            });
+
+            // Botón Importar CSV
+            document.getElementById('importBtn').addEventListener('click', function() {
+                document.getElementById('fileInput').click();
+            });
+
+            document.getElementById('fileInput').addEventListener('change', function(e) {
+                const file = this.files[0];
+                if (!file) return;
+                importarCSV(file);
+                this.value = ''; // reset para permitir re-seleccionar el mismo archivo
+            });
+
+            // Cargar inicial
+            renderLista('', null);
+            document.getElementById('panelSection').innerHTML = `<div class="panel-placeholder">Selecciona un cliente para ver sus detalles</div>`;
+        })();
+    </script>
+</body>
+</html>
