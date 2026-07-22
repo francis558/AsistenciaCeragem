@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ceragem - Terapias</title>
+    <title>CERAGEM - Terapias</title>
     <style>
         /* Reset y estilos generales */
         * {
@@ -339,7 +339,7 @@
 <body>
 
     <div class="header">
-        <h1>Ceragem</h1>
+        <h1>CERAGEM</h1>
         <p>Terapias · Control de asistencias</p>
     </div>
 
@@ -383,6 +383,7 @@
                 <input type="text" id="searchInput" placeholder="🔍 Buscar por nombre, documento, teléfono o correo..." />
                 <button class="btn btn-outline" id="clearSearch">✖ Limpiar</button>
                 <button class="btn" id="importBtn">📂 Importar CSV</button>
+                <button class="btn btn-success" id="exportBtn">📤 Exportar CSV</button>
                 <input type="file" id="fileInput" accept=".csv" />
             </div>
             <div class="client-list-wrapper" id="clientList">
@@ -569,172 +570,4 @@
                 clientes.splice(idx, 1);
                 saveClientes(clientes);
                 document.getElementById('panelSection').innerHTML = `<div class="panel-placeholder">Selecciona un cliente para ver sus detalles</div>`;
-                renderLista(document.getElementById('searchInput').value, null);
-            }
-
-            // -------- Agregar cliente (desde formulario) --------
-            function agregarCliente(e) {
-                e.preventDefault();
-
-                const nombre = document.getElementById('nombre').value.trim();
-                const documento = document.getElementById('documento').value.trim();
-                const telefono = document.getElementById('telefono').value.trim();
-                const correo = document.getElementById('correo').value.trim();
-                const monto = parseFloat(document.getElementById('monto').value) || 0;
-                const diasTotales = parseInt(document.getElementById('dias').value);
-
-                if (!nombre || !documento) {
-                    alert('Nombre y Documento son obligatorios.');
-                    return;
-                }
-                if (isNaN(diasTotales) || diasTotales < 1) {
-                    alert('Ingresa una cantidad de días válida (mínimo 1).');
-                    return;
-                }
-
-                const clientes = getClientes();
-                if (existeCliente(nombre, documento, clientes)) {
-                    alert(`Ya existe un cliente con el nombre "${nombre}" y documento "${documento}".`);
-                    return;
-                }
-
-                const nuevo = {
-                    id: Date.now() + Math.random(),
-                    nombre,
-                    documento,
-                    telefono,
-                    correo,
-                    monto,
-                    diasTotales,
-                    diasRestantes: diasTotales,
-                    historial: []
-                };
-
-                clientes.push(nuevo);
-                saveClientes(clientes);
-
-                document.getElementById('nombre').value = '';
-                document.getElementById('documento').value = '';
-                document.getElementById('telefono').value = '';
-                document.getElementById('correo').value = '';
-                document.getElementById('monto').value = '';
-                document.getElementById('dias').value = '';
-
-                renderLista(document.getElementById('searchInput').value, nuevo.id);
-                renderPanel(nuevo);
-            }
-
-            // -------- Importar CSV --------
-            function importarCSV(file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const text = e.target.result;
-                    const lineas = text.split(/\r?\n/).filter(linea => linea.trim() !== '');
-                    if (lineas.length < 2) {
-                        alert('El archivo CSV debe tener al menos una fila de encabezados y una de datos.');
-                        return;
-                    }
-
-                    // Extraer encabezados (primera fila)
-                    const encabezados = lineas[0].split(',').map(h => h.trim().toLowerCase());
-                    // Mapeo de columnas esperadas
-                    const idxNombre = encabezados.indexOf('nombre');
-                    const idxDocumento = encabezados.indexOf('documento');
-                    const idxTelefono = encabezados.indexOf('telefono');
-                    const idxCorreo = encabezados.indexOf('correo');
-                    const idxMonto = encabezados.indexOf('monto');
-                    const idxDias = encabezados.indexOf('diastotales');
-
-                    if (idxNombre === -1 || idxDocumento === -1 || idxDias === -1) {
-                        alert('El CSV debe contener al menos las columnas: nombre, documento, diasTotales.');
-                        return;
-                    }
-
-                    const clientesActuales = getClientes();
-                    let agregados = 0;
-                    let omitidos = 0;
-
-                    for (let i = 1; i < lineas.length; i++) {
-                        const columnas = lineas[i].split(',').map(c => c.trim());
-                        // Si la fila tiene menos columnas que los encabezados, rellenar con vacío
-                        while (columnas.length < encabezados.length) columnas.push('');
-
-                        const nombre = columnas[idxNombre] || '';
-                        const documento = columnas[idxDocumento] || '';
-                        const telefono = (idxTelefono !== -1) ? columnas[idxTelefono] || '' : '';
-                        const correo = (idxCorreo !== -1) ? columnas[idxCorreo] || '' : '';
-                        const monto = (idxMonto !== -1) ? parseFloat(columnas[idxMonto]) || 0 : 0;
-                        const diasTotales = parseInt(columnas[idxDias]) || 0;
-
-                        if (!nombre || !documento || diasTotales < 1) {
-                            omitidos++;
-                            continue; // fila inválida
-                        }
-
-                        // Verificar duplicado
-                        if (existeCliente(nombre, documento, clientesActuales)) {
-                            omitidos++;
-                            continue;
-                        }
-
-                        const nuevo = {
-                            id: Date.now() + Math.random() + i,
-                            nombre,
-                            documento,
-                            telefono,
-                            correo,
-                            monto,
-                            diasTotales,
-                            diasRestantes: diasTotales,
-                            historial: []
-                        };
-                        clientesActuales.push(nuevo);
-                        agregados++;
-                    }
-
-                    saveClientes(clientesActuales);
-                    alert(`✅ Importación completada.\nSe agregaron ${agregados} clientes.\nSe omitieron ${omitidos} (datos inválidos o duplicados).`);
-                    // Refrescar vista
-                    renderLista(document.getElementById('searchInput').value, null);
-                    document.getElementById('panelSection').innerHTML = `<div class="panel-placeholder">Selecciona un cliente para ver sus detalles</div>`;
-                };
-                reader.readAsText(file, 'UTF-8');
-            }
-
-            // -------- Eventos e inicialización --------
-            document.getElementById('formCliente').addEventListener('submit', agregarCliente);
-
-            document.getElementById('searchInput').addEventListener('input', function() {
-                const filtro = this.value;
-                let selectedId = null;
-                const activeItem = document.querySelector('.client-item.active');
-                if (activeItem) selectedId = activeItem.dataset.id;
-                renderLista(filtro, selectedId);
-            });
-
-            document.getElementById('clearSearch').addEventListener('click', function() {
-                document.getElementById('searchInput').value = '';
-                const activeItem = document.querySelector('.client-item.active');
-                const selectedId = activeItem ? activeItem.dataset.id : null;
-                renderLista('', selectedId);
-            });
-
-            // Botón Importar CSV
-            document.getElementById('importBtn').addEventListener('click', function() {
-                document.getElementById('fileInput').click();
-            });
-
-            document.getElementById('fileInput').addEventListener('change', function(e) {
-                const file = this.files[0];
-                if (!file) return;
-                importarCSV(file);
-                this.value = ''; // reset para permitir re-seleccionar el mismo archivo
-            });
-
-            // Cargar inicial
-            renderLista('', null);
-            document.getElementById('panelSection').innerHTML = `<div class="panel-placeholder">Selecciona un cliente para ver sus detalles</div>`;
-        })();
-    </script>
-</body>
-</html>
+                renderLista(document.getElementById('searchInput').value,
